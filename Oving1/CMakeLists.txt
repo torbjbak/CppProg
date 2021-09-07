@@ -4,4 +4,5 @@ project(Oving1)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -Wall -Wextra")
 
-add_executable(Oving1 b.cpp)
+add_executable(a a.cpp)
+add_executable(b b.cpp)
