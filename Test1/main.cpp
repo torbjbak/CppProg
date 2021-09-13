@@ -1,26 +1,14 @@
 #include <iostream>
+#include "Covering.hpp"
+#include "Material.hpp"
 
 using namespace std;
 
-const int max_line_length = 81;
-
 int main() {
-    char name[max_line_length];
-    char address[max_line_length];
-    int age;
-    char position[max_line_length];
-
-    cout << "Navn: ";
-    cin.getline(name, max_line_length);
-    cout << "Adresse: ";
-    cin.getline(address, max_line_length);
-    cout << "Alder: ";
-    cin >> age;
-    cout << "Stilling: ";
-    cin.getline(position, max_line_length);
-
-    cout << name << endl
-         << address << endl
-         << age << endl
-         << position << endl;
+  Covering covering("Super Duper Dux", 433.50, 4);
+  // get_name() og get_price() arves til subklassene:
+  cout << "Navn: " << covering.get_name() << ", pris: "
+                   << covering.get_price() << endl;
+  // Objektet bruker sin egen print()-funksjon (og ikke den som er arvet)
+  covering.print();
 }
