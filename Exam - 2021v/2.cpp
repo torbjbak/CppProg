@@ -2,50 +2,82 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include <functional>
 
 using namespace std;
 
-class Animal {
+class Button {
 public:
-    string name;
+    string label;
+    function<void()> on_click;
+    Button(string label, function<void()> on_click) : label(move(label)), on_click(move(on_click)) {}
+    virtual ~Button() = default;
 
-    explicit Animal(string name_) : name(std::move(name_)){}
-    virtual ~Animal()= default;
+    virtual void activate() = 0;
+    virtual string get_string() const = 0;
 
-    virtual string type() const = 0;
-
-    friend ostream &operator<<(ostream &out, const Animal &animal) {
-        out << animal.type() + " named " + animal.name;
-        return out;
+    friend ostream &operator<<(ostream &out, const Button &button) {
+        return out << button.get_string();
     }
 };
 
-class Cat : public Animal {
+class ToggleButton : public Button {
 public:
-    explicit Cat(const string &name_) : Animal(name_){}
+    bool toggled;
 
-    string type() const override {
-        return "Cat";
+    ToggleButton(string label, bool toggled, function<void()> on_click) :
+            Button(move(label), move(on_click)), toggled(toggled) {}
+
+    void activate() override {
+        toggled = !toggled;
+        on_click();
+    }
+
+    string get_value() const {
+        if(toggled)
+            return "toggled";
+        else
+            return "not toggled";
+    }
+
+    string get_string() const override {
+        return "ToggleButton, label: " + label + ", value: " + get_value();
     }
 };
 
-class Dog : public Animal {
+class LinkButton : public Button {
 public:
-    explicit Dog(const string &name_) : Animal(name_){}
+    string link;
+    LinkButton(string label, string link, function<void()> on_click) :
+        Button(move(label), move(on_click)), link(move(link)) {}
 
-    string type() const override {
-        return "Dog";
+    void activate() override {
+        on_click();
+    }
+
+    string get_string() const override {
+        return "LinkButton, label: " + label + ", link: " + link;
     }
 };
 
 int main() {
-    vector<unique_ptr<Animal>> animals;
-    animals.emplace_back(new Cat("Oreo"));
-    animals.emplace_back(new Dog("Buddy"));
-    animals.emplace_back(new Dog("Charlie"));
-    // animals.emplace_back(new Animal()); // Should cause compilation error
-    // animals.emplace_back(new Animal("Max")); // Should cause compilation error
-    for (auto &animal : animals)
-        cout << *animal << endl;
+    vector<unique_ptr<Button>> buttons;
 
+    buttons.emplace_back(make_unique<ToggleButton>(
+        "Toggle something",
+        true,
+        [] { cout << "Toggled something" << endl; }
+    ));
+
+    buttons.emplace_back(make_unique<LinkButton>(
+        "Link to somewhere",
+        "https://ntnu.no",
+        [] { cout << "Opened link" << endl; }
+    ));
+
+    for (auto &button : buttons) {
+        cout << *button << endl;
+        button->activate();
+        cout << *button << endl;
+    }
 }
