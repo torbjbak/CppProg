@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(Exam___2021v)
+project(Exam2021v)
 
 set(CMAKE_CXX_STANDARD 14)
 
