@@ -80,4 +80,6 @@ int main() {
         button->activate();
         cout << *button << endl;
     }
+
+    return 0;
 }
